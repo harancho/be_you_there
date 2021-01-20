@@ -4,6 +4,7 @@ import 'pages/register.dart';
 import 'pages/login.dart';
 import 'pages/tracing.dart';
 import 'pages/navigation.dart';
+import 'pages/bluetooth-devices.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -13,7 +14,8 @@ void main() {
       '/login' : (context) => Login(),
       '/home' : (context) => Home(),
       '/tracing' : (context) => Tracing(),
-      '/navigation' : (context) => Navigation()
+      '/navigation' : (context) => Navigation(),
+      '/bluetooth-devices' : (context) => BluetoothDevices()
     },
   ));
 }

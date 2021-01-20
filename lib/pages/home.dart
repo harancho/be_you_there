@@ -1,6 +1,9 @@
 import 'package:be_you_there_final_project/pages/navigation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue/gen/flutterblue.pb.dart';
+import 'package:flutter_blue/gen/flutterblue.pbserver.dart';
+
 
 class Home extends StatefulWidget {
   @override
@@ -8,8 +11,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-  // FlutterBlue flutterBlue = FlutterBlue.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +34,36 @@ class _HomeState extends State<Home> {
             ListTile(
               title: Text("Shortest Path"),
               onTap: (){
-                print("HI");
                 Navigator.pushNamed(context, "/navigation");
               },
             ),
             ListTile(
               title: Text("Bluetooth Device Scan"),
-              onTap: (){
-                print("hi");
-                // flutterBlue.startScan(timeout: Duration(seconds: 4));
-                //
-                // var subscription = flutterBlue.scanResults.listen((results) {
-                //   for (ScanResult r in results) {
-                //     print('${r.device.name} found! rssi: ${r.rssi}');
-                //   }
-                // });
-                //
-                // flutterBlue.stopScan();
-                // print(subscription);
+              onTap: () async {
+
+                if(await FlutterBlue.instance.isOn)
+                  {
+                    print("onn");
+                    Navigator.pushNamed(context, "/bluetooth-devices");
+                  }
+                else
+                  {
+                    print("off");
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text("Bluetooth is off! Please turn it on"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: (){
+                              Navigator.of(ctx).pop();
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  }
               },
             )
           ],
