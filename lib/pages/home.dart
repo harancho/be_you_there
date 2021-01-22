@@ -32,13 +32,13 @@ class _HomeState extends State<Home> {
               }
             ),
             ListTile(
-              title: Text("Shortest Path"),
+              title: Text("Navigation Simulation"),
               onTap: (){
                 Navigator.pushNamed(context, "/navigation");
               },
             ),
             ListTile(
-              title: Text("Bluetooth Device Scan"),
+              title: Text("Actual Deployment"),
               onTap: () async {
 
                 if(await FlutterBlue.instance.isOn)

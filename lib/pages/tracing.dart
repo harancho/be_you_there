@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class Tracing extends StatefulWidget {
@@ -11,6 +13,16 @@ class _TracingState extends State<Tracing> {
 
   @override
   Widget build(BuildContext context) {
+
+    Timer(Duration(seconds: 1),(){
+      setState(() {
+        i = i+1;
+        if(i==22)
+        {
+          i =0;
+        }
+      });
+    });
 
     var actual_x_list = [0, 10, 20, 30, 40, 40, 50, 60, 70, 80, 90, 100, 110, 76.59, 76.59, 76.59, 76.59, 76.59, 76.59, 86, 96, 106];
     var actual_y_list = [47.11 , 47.11, 47.11, 47.11, 47.11, 56.11, 58, 58, 58, 58, 58, 58, 58, 58, 48, 38, 28, 18, 14.87, 14.87, 14.87, 14.87];
@@ -61,13 +73,7 @@ class _TracingState extends State<Tracing> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          setState(() {
-            i = i + 1;
-            if(i==22)
-            {
-              i =0;
-            }
-          });
+
         },
         backgroundColor: Colors.grey,
         child: Icon(
