@@ -60,7 +60,7 @@ class _NavigationState extends State<Navigation> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Navigation Simulation"),
+        title: Text("Location prediction"),
       ),
       body: Center(
         child: Stack(

@@ -15,15 +15,12 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
 
   // FlutterBeacon flutterBeacon;
   StreamSubscription<RangingResult> _streamRanging;
-  List beacons_list = ['start'];
-  final _regionBeacons = <Region, List<Beacon>>{};
-  final _beacons = <Beacon>[];
+  List beacons_list = [];
 
   void myFunction() async {
-
     try {
       await flutterBeacon.initializeAndCheckScanning;
-    } on PlatformException catch(e) {
+    } on PlatformException catch (e) {
       print("error found");
       print(e);
       // library failed to initialize, check code and message
@@ -34,57 +31,77 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
     // ];
 
     final regions = <Region>[];
-    regions.add(Region(identifier: null,proximityUUID: '00080f08-080f-77eb-4a35-b67f03739aac'));
+    regions.add(Region(identifier: null, proximityUUID: null));
 
     // regions.add(Region(proximityUUID: ''));
 
 
-    _streamRanging = flutterBeacon.ranging(regions).listen((RangingResult result) {
-      print(result);
-      if(result.beacons.isNotEmpty)
-        {
-          print(result.beacons);
-          beacons_list.add(result.toString());
-        }
-      // beacons_list.add(result.toString());
-    });
+    _streamRanging =
+        flutterBeacon.ranging(regions).listen((RangingResult result) {
+          print(result);
+          if (result.beacons.isNotEmpty) {
+            beacons_list.removeRange(0, beacons_list.length);
+            print("------");
+            print(beacons_list.length);
+            print("------");
+            for (var i = 0; i < result.beacons.length; i++) {
+              beacons_list.add(result.beacons[i].proximityUUID);
+            }
+            setState(() {
+
+            });
+            //beacons_list.add(result.beacons[0].proximityUUID.toString());
+            // beacons_list.add(result);
+          }
+          else
+            {
+              beacons_list.removeRange(0, beacons_list.length);
+              setState(() {
+
+              });
+            }
+          // beacons_list.add(result.toString());
+        });
 
 // to stop ranging beacons
 
-    Timer(Duration(seconds: 10),(){
-      _streamRanging.cancel();
-      beacons_list.add("end");
-      setState(() {
-
-      });
-    });
+    // Timer(Duration(seconds: 2),(){
+    //   _streamRanging.cancel();
+    //   setState(() {
+    //
+    //   });
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-
-    //List list_1 = ['harsh','riti','ok'];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Actual Deployment"),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Actual Deployment"),
+        ),
+        body:
+        ListView.builder(
+          itemCount: beacons_list.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                onTap: () {},
+                title: Text(beacons_list[index]),
+              ),
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            myFunction();
+          },
+        ),
       ),
-      body:
-      ListView.builder(
-        itemCount: beacons_list.length,
-        itemBuilder: (context,index){
-          return Card(
-            child: ListTile(
-              onTap: (){},
-              title: Text(beacons_list[index]),
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          myFunction();
-        },
-      ),
+      onWillPop: () {
+        _streamRanging.cancel();
+        Navigator.of(context).pop();
+      },
     );
   }
 }
