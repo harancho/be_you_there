@@ -17,6 +17,13 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
   StreamSubscription<RangingResult> _streamRanging;
   List beacons_list = [];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    myFunction();
+  }
+
   void myFunction() async {
     try {
       await flutterBeacon.initializeAndCheckScanning;
@@ -92,11 +99,11 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            myFunction();
-          },
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     myFunction();
+        //   },
+        // ),
       ),
       onWillPop: () {
         _streamRanging.cancel();
