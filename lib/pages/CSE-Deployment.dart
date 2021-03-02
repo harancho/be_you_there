@@ -22,6 +22,11 @@ class _CseDeploymentState extends State<CseDeployment> {
 
   List active_x_coordinate = [];
   List active_y_coordinate = [];
+
+  //added this extra part in http call to coordinate with list of current_available_beacons and position predicted
+  List active_x_c = [];
+  List active_y_c = [];
+
   var predicted_x;
   var predicted_y;
 
@@ -32,17 +37,21 @@ class _CseDeploymentState extends State<CseDeployment> {
     myFunction();
   }
 
-  makePostRequest() async {
+  makePostRequest(List active_x,List active_y) async {
 
     String url = "https://byt-server.siddharthg123.repl.co/predict";
     Map<String, String> headers = {"Content-type": "application/json"};
     List available_beacon_uuid = beacons_list;
-
-    Response response = await post(url, headers: headers, body: jsonEncode({'uuids' : available_beacon_uuid}));
+    //added this extra part in http call to coordinate with list of current_available_beacons and position predicted
+    Response response = await post(url, headers: headers, body: jsonEncode({'uuids' : available_beacon_uuid,'x': active_x,'y': active_y}));
 
     final decoded = jsonDecode(response.body) as Map;
     predicted_x = decoded['position'][0];
     predicted_y = decoded['position'][1];
+
+    //added this extra part in http call to coordinate with list of current_available_beacons and position predicted
+    active_x_c = decoded['active_x'];
+    active_y_c = decoded['active_y'];
   }
 
   void myFunction() async {
@@ -94,12 +103,13 @@ class _CseDeploymentState extends State<CseDeployment> {
                 active_y_coordinate.add(beacon_list_y_coordinate[2]);
               }
             }
-            print(beacons_list.length);
-            await makePostRequest();
+            await makePostRequest(active_x_coordinate,active_y_coordinate);
+            
+            if(this.mounted) {
+              setState(() {
 
-            setState(() {
-
-            });
+              });
+            }
           }
           else {
             active_x_coordinate.removeRange(0, active_x_coordinate.length);
@@ -116,6 +126,9 @@ class _CseDeploymentState extends State<CseDeployment> {
 
     var beacon_x_coordinate = [52.32,43.32,44.36,44.36,44.36,42.06,42.06,37.56,24.43,19.93,15.43,10.73,6.43,19.53,19.53,12.18,12.18,18.53,19.53,15.12,7.32,16.32,25.32,34.32,30.93];
     var beacon_y_coordinate = [16.34,16.34,17.9,22.4,26.9,31.6,40.6,39.39,40.49,40.49,40.49,40.49,40.49,39.46,33.41,31.32,26.82,26.82,24.41,20.84,16.34,16.34,16.34,16.34,40.49];
+
+    // var beacon_x_coordinate = [7.320,19.53,44.36,55.50,44.36,42.06,42.06,19.53,37.56,37.56,35.00,35.00,19.53,6.430,12.18,12.18,19.53];
+    // var beacon_y_coordinate = [16.34,16.34,16.34,16.34,30.00,30.00,40.60,26.82,40.60,39.00,39.00,40.49,40.49,40.49,26.82,34.50,34.50];
 
     return WillPopScope(
       child: Scaffold(
@@ -140,9 +153,9 @@ class _CseDeploymentState extends State<CseDeployment> {
                     color: Colors.blue,
                   ),
                 ),
-              for (var  index = 0; index< beacons_list.length ; index++)
+              for (var  index = 0; index< active_x_c.length ; index++)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(active_x_coordinate[index]*6.0, active_y_coordinate[index]*6.0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(active_x_c[index]*6.0, active_y_c[index]*6.0, 0, 0),
                   child: Icon(
                     Icons.circle,
                     size: 7,
@@ -152,7 +165,7 @@ class _CseDeploymentState extends State<CseDeployment> {
 
               if (predicted_x != null)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(predicted_x * 6.0, predicted_y * 6.0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(predicted_x * 6, predicted_y * 6.0, 0, 0),
                   child: Icon(
                     Icons.circle,
                     size: 7,

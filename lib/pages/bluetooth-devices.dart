@@ -70,11 +70,13 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
               beacons_list.add(result.beacons[i].proximityUUID);
             }
             print(beacons_list.length);
-            await makePostRequest();
+            // await makePostRequest();
 
-            setState(() {
+            if(this.mounted) {
+              setState(() {
 
-            });
+              });
+            }
             //beacons_list.add(result.beacons[0].proximityUUID.toString());
             // beacons_list.add(result);
             // print(result);
