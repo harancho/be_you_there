@@ -45,17 +45,17 @@ class _NavigationState extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
 
-    var index = 0;
+    // var index = 0;
 
-    Timer(Duration(seconds: 1),(){
-      setState(() {
-        i = i+1;
-        if(i==22)
-          {
-            i =0;
-          }
-      });
-    });
+    // Timer(Duration(seconds: 1),(){
+    //   setState(() {
+    //     i = i+1;
+    //     if(i==22)
+    //       {
+    //         i =0;
+    //       }
+    //   });
+    // });
 
 
     return Scaffold(
@@ -101,7 +101,13 @@ class _NavigationState extends State<Navigation> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-
+          setState(() {
+            i = i+1;
+            if(i==22)
+            {
+              i =0;
+            }
+          });
         },
         backgroundColor: Colors.grey,
         child: Icon(

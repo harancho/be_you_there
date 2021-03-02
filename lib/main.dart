@@ -5,6 +5,7 @@ import 'pages/login.dart';
 import 'pages/tracing.dart';
 import 'pages/navigation.dart';
 import 'pages/bluetooth-devices.dart';
+import 'pages/CSE-Deployment.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -15,7 +16,8 @@ void main() {
       '/home' : (context) => Home(),
       '/tracing' : (context) => Tracing(),
       '/navigation' : (context) => Navigation(),
-      '/bluetooth-devices' : (context) => BluetoothDevices()
+      '/bluetooth-devices' : (context) => BluetoothDevices(),
+      '/CSE-Deployment' : (context) => CseDeployment()
     },
   ));
 }

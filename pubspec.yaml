@@ -26,7 +26,7 @@ dependencies:
   hexcolor: ^1.0.6
   flutter_blue: ^0.7.3
   flutter_beacon: ^0.3.0
-
+  http: ^0.12.2
 
 
 

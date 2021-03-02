@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              title: Text("Actual Deployment"),
+              title: Text("Available Beacons"),
               onTap: () async {
 
                 if(await FlutterBlue.instance.isOn)
@@ -65,7 +65,37 @@ class _HomeState extends State<Home> {
                     );
                   }
               },
-            )
+            ),
+            ListTile(
+                title: Text("CSE Deployment"),
+                onTap: () async {
+                  // Navigator.pushNamed(context, '/CSE-Deployment');
+
+                  if(await FlutterBlue.instance.isOn)
+                  {
+                    print("onn");
+                    Navigator.pushNamed(context, "/CSE-Deployment");
+                  }
+                  else
+                  {
+                    print("off");
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text("Bluetooth is off! Please turn it on"),
+                        actions: [
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: (){
+                              Navigator.of(ctx).pop();
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                }
+            ),
           ],
         ),
       ),

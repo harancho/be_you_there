@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_beacon/flutter_beacon.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:http/http.dart';
 
 class BluetoothDevices extends StatefulWidget {
   @override
@@ -22,6 +24,19 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
     // TODO: implement initState
     super.initState();
     myFunction();
+  }
+
+  makePostRequest() async {
+
+    String url = "https://byt-server.siddharthg123.repl.co/predict";
+    Map<String, String> headers = {"Content-type": "application/json"};
+    List available_beacon_uuid = beacons_list;
+    // String json = '{"uuids" : $available_beacon_uuid}';
+
+    Response response = await post(url, headers: headers, body: jsonEncode({'uuids' : available_beacon_uuid}));
+    //int statusCode = response.statusCode;
+
+    print(response.body);
   }
 
   void myFunction() async {
@@ -44,21 +59,25 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
 
 
     _streamRanging =
-        flutterBeacon.ranging(regions).listen((RangingResult result) {
-          print(result);
+        flutterBeacon.ranging(regions).listen((RangingResult result) async {
+          // print(result);
           if (result.beacons.isNotEmpty) {
             beacons_list.removeRange(0, beacons_list.length);
-            print("------");
-            print(beacons_list.length);
-            print("------");
+            // print("------");
+            // print(beacons_list.length);
+            // print("------");
             for (var i = 0; i < result.beacons.length; i++) {
               beacons_list.add(result.beacons[i].proximityUUID);
             }
+            print(beacons_list.length);
+            await makePostRequest();
+
             setState(() {
 
             });
             //beacons_list.add(result.beacons[0].proximityUUID.toString());
             // beacons_list.add(result);
+            // print(result);
           }
           else
             {
@@ -85,7 +104,7 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Actual Deployment"),
+          title: Text("Available Beacons"),
         ),
         body:
         ListView.builder(
@@ -107,6 +126,7 @@ class _BluetoothDevicesState extends State<BluetoothDevices> {
       ),
       onWillPop: () {
         _streamRanging.cancel();
+        // ignore: missing_return
         Navigator.of(context).pop();
       },
     );
