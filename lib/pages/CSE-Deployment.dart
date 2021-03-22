@@ -16,12 +16,16 @@ class _CseDeploymentState extends State<CseDeployment> {
 
   StreamSubscription<RangingResult> _streamRanging;
   List beacons_list = [];
-  List beacon_uuid = ['00080F08-08EB-2B7E-B52C-66FFA7268E7E','00080F08-08CF-77EB-4A35-B67F03739AAC','00080F08-0845-3A95-FA5B-F6EDFDBE3532'];
-  List beacon_list_x_coordinate = [16.32,25.32,34.32];
-  List beacon_list_y_coordinate = [16.34,16.34,16.34];
+  List beacon_uuid = ['00080F08-08EB-2B7E-B52C-66FFA7268E7E','00080F08-08CF-77EB-4A35-B67F03739AAC','00080F08-0845-3A95-FA5B-F6EDFDBE3532','53594F4F-4B53-4146-4551-524E54414754','53594F4F-4B53-4146-4551-524E54414753'];
+  List beacon_list_x_coordinate = [7.32,16.32,25.32,34.32,43.32];  //36:Ac 1st      //36:C5  2nd      //36:A1 3rd
+  List beacon_list_y_coordinate = [16.34,16.34,16.34,16.34,16.34];
 
   List active_x_coordinate = [];
   List active_y_coordinate = [];
+
+  List path = [];
+
+  List destination = [0,0];
 
   //added this extra part in http call to coordinate with list of current_available_beacons and position predicted
   List active_x_c = [];
@@ -45,6 +49,7 @@ class _CseDeploymentState extends State<CseDeployment> {
     //added this extra part in http call to coordinate with list of current_available_beacons and position predicted
     Response response = await post(url, headers: headers, body: jsonEncode({'uuids' : available_beacon_uuid,'x': active_x,'y': active_y}));
 
+    // print(response.body);
     final decoded = jsonDecode(response.body) as Map;
     predicted_x = decoded['position'][0];
     predicted_y = decoded['position'][1];
@@ -52,6 +57,16 @@ class _CseDeploymentState extends State<CseDeployment> {
     //added this extra part in http call to coordinate with list of current_available_beacons and position predicted
     active_x_c = decoded['active_x'];
     active_y_c = decoded['active_y'];
+    path = decoded['path'];
+    print(path);
+    destination = decoded['end'];
+    print(destination);
+    // print(active_y_c.length);
+
+    //receive destination coordinates here and path to reach there in last step
+
+
+    //
   }
 
   void myFunction() async {
@@ -102,9 +117,19 @@ class _CseDeploymentState extends State<CseDeployment> {
                 active_x_coordinate.add(beacon_list_x_coordinate[2]);
                 active_y_coordinate.add(beacon_list_y_coordinate[2]);
               }
+
+              if(beacon_uuid[3] == beacons_list[i]){
+                active_x_coordinate.add(beacon_list_x_coordinate[3]);
+                active_y_coordinate.add(beacon_list_y_coordinate[3]);
+              }
+
+              if(beacon_uuid[4] == beacons_list[i]){
+                active_x_coordinate.add(beacon_list_x_coordinate[4]);
+                active_y_coordinate.add(beacon_list_y_coordinate[4]);
+              }
             }
             await makePostRequest(active_x_coordinate,active_y_coordinate);
-            
+
             if(this.mounted) {
               setState(() {
 
@@ -139,14 +164,23 @@ class _CseDeploymentState extends State<CseDeployment> {
           child: Stack(
             children: [
               Image(
-                image: AssetImage("lib/images/cse_map.jpg"),
-                height: 57.11 * 6.0,
-                width: 63.21 * 6.0,
+                image: AssetImage("lib/images/img-1.jpg"),
+                height: 56.6 * 6.0,
+                width: 62.6 * 6.0,
               ),
-              for(var index = 0 ; index< beacon_x_coordinate.length ; index++)                //will include this when we will do final navigation
+              // for(var index = 0 ; index< beacon_x_coordinate.length ; index++)                //will include this when we will do final navigation
+              //   Padding(
+              //     padding: EdgeInsets.fromLTRB(beacon_x_coordinate[index]*6.0, beacon_y_coordinate[index]*6.0, 0, 0),
+              //     //padding: EdgeInsets.fromLTRB(path[index][0]*3.0, path_y_list[index][1]*3.0, 0, 0),
+              //     child: Icon(
+              //       Icons.circle,
+              //       size: 7,
+              //       color: Colors.blue,
+              //     ),
+              //   ),
+              for(var index = 0;index<path.length;index++)
                 Padding(
-                  padding: EdgeInsets.fromLTRB(beacon_x_coordinate[index]*6.0, beacon_y_coordinate[index]*6.0, 0, 0),
-                  //padding: EdgeInsets.fromLTRB(path[index][0]*3.0, path_y_list[index][1]*3.0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(path[index][0] * (6.0/5.0), path[index][1] * (6.0/5.0),0, 0),
                   child: Icon(
                     Icons.circle,
                     size: 7,
@@ -171,9 +205,43 @@ class _CseDeploymentState extends State<CseDeployment> {
                     size: 7,
                     color: Colors.black,
                   ),
-                )
+                ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(destination[0] * (6.0/5.0), destination[1] * (6.0/5.0), 0, 0),
+                child: Icon(
+                  Icons.circle,
+                  size: 7,
+                  color: Colors.black,
+                ),
+              ),
 
+
+
+              //add 1 if condition to display destination point
+              //add 1 for loop to display the path from current_position to destination
+
+
+              //
             ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+
+            // print(beacons_list);
+            // await makePostRequest(active_x_coordinate,active_y_coordinate);
+            // if(this.mounted) {
+            //   setState(() {
+            //
+            //   });
+            // }
+
+          },
+          backgroundColor: Colors.grey,
+          child: Icon(
+            Icons.edit_location,
+            color: Colors.black,
+            size: 30,
           ),
         ),
       ),
